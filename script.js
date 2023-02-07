@@ -11,11 +11,6 @@ const btnNew = document.querySelector('.btn--new');
 const btnRoll = document.querySelector('.btn--roll');
 const btnHold = document.querySelector('.btn--hold');
 
-// --------初始化----------
-score0.textContent = 0;
-score1.textContent = 0;
-dice.classList.add('hidden');
-
 // --------搖骰子功能------
 
 let activePlayer = 0; //當前玩家
@@ -27,6 +22,25 @@ let scores = [0, 0]; //紀錄兩名玩家總分的array
 // --------遊戲進行中/結束的狀態------
 
 let playing = true;
+
+// --------初始化----------
+const init = () => {
+  score0.textContent = 0;
+  score1.textContent = 0;
+  current0.textContent = 0;
+  current1.textContent = 0;
+  dice.classList.add('hidden');
+  activePlayer = 0;
+  currentScore = 0;
+  scores = [0, 0];
+  playing = true;
+  player0.classList.remove('player--winner');
+  player1.classList.remove('player--winner');
+  player0.classList.add('player--active');
+  player1.classList.remove('player--active');
+};
+
+init();
 
 //--------重構的function----------
 //切換玩家
@@ -85,4 +99,9 @@ btnHold.addEventListener('click', () => {
       changePlayer();
     }
   }
+});
+
+//-------重新開始功能-------
+btnNew.addEventListener('click', () => {
+  init();
 });
