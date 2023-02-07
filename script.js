@@ -24,27 +24,65 @@ let currentScore = 0; //當前分數
 
 let scores = [0, 0]; //紀錄兩名玩家總分的array
 
+// --------遊戲進行中/結束的狀態------
+
+let playing = true;
+
+//--------重構的function----------
+//切換玩家
+const changePlayer = () => {
+  //切換玩家
+  currentScore = 0;
+  document.querySelector(`#current--${activePlayer}`).textContent = 0;
+  activePlayer = activePlayer === 0 ? 1 : 0;
+  //切換玩家的視覺效果
+  player0.classList.toggle('player--active');
+  player1.classList.toggle('player--active');
+};
+
 btnRoll.addEventListener('click', () => {
-  // 1.產生一個1~6的隨機數字
-  const diceNumber = Math.trunc(Math.random() * 6) + 1;
+  if (playing) {
+    // 1.產生一個1~6的隨機數字
+    const diceNumber = Math.trunc(Math.random() * 6) + 1;
 
-  // 2.改變骰子的圖
-  dice.classList.remove('hidden');
-  dice.src = `dice-${diceNumber}.png`;
+    // 2.改變骰子的圖
+    dice.classList.remove('hidden');
+    dice.src = `dice-${diceNumber}.png`;
 
-  // 3.檢查結果
-  if (diceNumber !== 1) {
-    // 3-1.如果不是1，將數字加到當前分數內
-    currentScore += diceNumber;
-    document.querySelector(`#current--${activePlayer}`).textContent =
-      currentScore;
-  } else {
-    // 3-2.如果是1，將當前分數清空並切換玩家
-    currentScore = 0;
-    document.querySelector(`#current--${activePlayer}`).textContent = 0;
-    activePlayer = activePlayer === 0 ? 1 : 0;
-    // 切換玩家的視覺效果
-    player0.classList.toggle('player--active');
-    player1.classList.toggle('player--active');
+    // 3.檢查結果
+    if (diceNumber !== 1) {
+      // 3-1.如果不是1，將數字加到當前分數內
+      currentScore += diceNumber;
+      document.querySelector(`#current--${activePlayer}`).textContent =
+        currentScore;
+    } else {
+      // 3-2.如果是1，將當前分數清空並切換玩家
+      changePlayer();
+    }
+  }
+});
+
+// --------保存分數功能--------
+btnHold.addEventListener('click', () => {
+  if (playing) {
+    // 1.把當前分數加到目前玩家的分數內
+    scores[activePlayer] += currentScore;
+    document.querySelector(`#score--${activePlayer}`).textContent =
+      scores[activePlayer];
+    // 2.檢查分數是否大於100
+    if (scores[activePlayer] >= 20) {
+      // 2-1.若大於100，則當前玩家獲勝，並結束遊戲
+      playing = false;
+      document
+        .querySelector(`.player--${activePlayer}`)
+        .classList.add('player--winner');
+      document
+        .querySelector(`.player--${activePlayer}`)
+        .classList.remove('player--active');
+      dice.classList.add('hidden');
+    } else {
+      // 2-2.若無，則交換玩家
+      changePlayer();
+    }
   }
 });
